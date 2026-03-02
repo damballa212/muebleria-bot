@@ -98,21 +98,28 @@ async def _ocr_and_save(image_base64: str, saved_photo_path: str) -> tuple[str, 
         if normalized_phone:
             existing = await db.execute(select(Client).where(Client.phone == normalized_phone))
             client = existing.scalar_one_or_none()
-            if client and result.nombre and client.name.startswith("Cliente pendiente OCR"):
-                client.name = result.nombre
+            if client:
+                if result.nombre and client.name.startswith("Cliente pendiente OCR"):
+                    client.name = result.nombre
+                if result.cedula and not client.cedula:
+                    client.cedula = result.cedula
 
         if not client and result.nombre:
             existing_by_name = await db.execute(
                 select(Client).where(Client.name.ilike(f"%{result.nombre}%")).limit(1)
             )
             client = existing_by_name.scalar_one_or_none()
-            if client and normalized_phone and client.name.startswith("Cliente pendiente OCR"):
-                client.phone = normalized_phone
+            if client:
+                if normalized_phone and client.name.startswith("Cliente pendiente OCR"):
+                    client.phone = normalized_phone
+                if result.cedula and not client.cedula:
+                    client.cedula = result.cedula
 
         if not client:
             client = Client(
                 name=result.nombre or "Cliente pendiente OCR",
                 phone=normalized_phone or _generate_placeholder_phone(),
+                cedula=result.cedula or None,
                 notes="Creado automáticamente desde OCR. Revisar datos identificatorios.",
             )
             db.add(client)

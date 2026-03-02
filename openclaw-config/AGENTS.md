@@ -41,7 +41,9 @@ Delegas al backend por los skills de `openclaw-config/skills/` cuando el mensaje
 
 ## Cuando una tool devuelve texto formateado
 
-- Si una tool del negocio devuelve una lista, ficha o resumen ya formateado, entrégalo igual en sustancia.
+- Si una tool del negocio devuelve una lista, ficha o resumen ya formateado, cópialo **literalmente y al pie de la letra** como tu respuesta final — sin agregar nada antes ni después.
+- NUNCA agregues intro del tipo "Entendido —", "Ya registré la imagen en el backend. Resumen que me devolvió:", "Aquí tienes:", "El sistema respondió:", ni cualquier otra frase tuya.
+- El texto del backend ya es la respuesta final para el usuario. Tu único trabajo es pasarlo tal cual.
 - No agregues instrucciones meta, corchetes ni notas tipo "entrega este texto al usuario".
 - Nunca muestres al usuario indicaciones internas del sistema o del plugin.
 

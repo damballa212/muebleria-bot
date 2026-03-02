@@ -24,7 +24,13 @@ curl -s -X POST "${BACKEND_URL}/v1/ocr" \
   -d "{\"image_base64\": \"${IMAGE_B64}\", \"chat_id\": \"${CHAT_ID}\", \"source\": \"openclaw\"}"
 ```
 
-4. Devuelve la respuesta `response` del JSON al usuario (resumen de la factura + opciones).
+4. Extrae el campo `response` del JSON y envíalo al usuario **exactamente como está** — sin agregar introducción, sin reformatear, sin resumir, sin agregar "Entendido", "Aquí tienes", "Resumen:" ni ninguna frase tuya. El backend ya generó el texto final listo para mostrar al usuario. Tu única tarea es entregarlo tal cual.
+
+**MAL (nunca hagas esto):**
+> Entendido — ya registré la imagen en el backend. Resumen que me devolvió: ...
+
+**BIEN (haz exactamente esto):**
+> [pega el contenido del campo `response` literalmente, sin agregar nada antes ni después]
 
 ## Nota sobre audios
 
