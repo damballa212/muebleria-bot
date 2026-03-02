@@ -206,7 +206,12 @@ async def _ocr_and_save(image_base64: str, saved_photo_path: str) -> tuple[str, 
 
     total_text = f"${result.total:,.0f}" if result.total else "no legible"
     abono_text = f"${result.abono:,.0f}" if result.abono else "—"
-    resta_text = f"${result.resta:,.0f}" if result.resta else "—"
+    if result.resta is None:
+        resta_text = "—"
+    elif result.resta == 0:
+        resta_text = "✅ Pagado"
+    else:
+        resta_text = f"${result.resta:,.0f}"
     num_text = f"#{ocr_invoice_number}" if ocr_invoice_number else "sin número"
 
     if parent_invoice_linked:
