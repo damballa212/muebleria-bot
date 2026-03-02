@@ -21,16 +21,19 @@ IMAGE_B64=$(base64 -w 0 "${IMAGE_PATH}")
 curl -s -X POST "${BACKEND_URL}/v1/ocr" \
   -H "Authorization: Bearer ${NORENA_API_KEY}" \
   -H "Content-Type: application/json" \
-  -d "{\"image_base64\": \"${IMAGE_B64}\", \"chat_id\": \"${CHAT_ID}\", \"source\": \"openclaw\"}"
+  -d "{\"image_base64\": \"${IMAGE_B64}\", \"chat_id\": \"${CHAT_ID}\", \"source\": \"openclaw\", \"send_direct\": true}"
 ```
 
-4. Extrae el campo `response` del JSON y envíalo al usuario **exactamente como está** — sin agregar introducción, sin reformatear, sin resumir, sin agregar "Entendido", "Aquí tienes", "Resumen:" ni ninguna frase tuya. El backend ya generó el texto final listo para mostrar al usuario. Tu única tarea es entregarlo tal cual.
+4. Con `"send_direct": true`, el backend ya envió la respuesta completa al usuario **directamente vía Telegram**.
+   El curl devuelve solo el ACK `{"response": "✅ Factura registrada.", "status": "success"}`.
+   **Tu única tarea es responder con ese ACK textual — nada más, nada menos.**
 
 **MAL (nunca hagas esto):**
-> Entendido — ya registré la imagen en el backend. Resumen que me devolvió: ...
+> Entendido — ya registré la imagen en el backend. Aquí el resumen: ...
+> La factura fue procesada. El sistema respondió: ...
 
 **BIEN (haz exactamente esto):**
-> [pega el contenido del campo `response` literalmente, sin agregar nada antes ni después]
+> ✅ Factura registrada.
 
 ## Nota sobre audios
 

@@ -246,6 +246,7 @@ class ProcessRequest(BaseModel):
     chat_id: str
     source: str = "openclaw"
     timestamp: str = ""
+    send_direct: bool = False  # True → backend envía a Telegram; devuelve solo ACK
 
 
 class OcrRequest(BaseModel):
@@ -253,6 +254,7 @@ class OcrRequest(BaseModel):
     chat_id: str
     source: str = "openclaw"
     timestamp: str = ""
+    send_direct: bool = False  # True → backend envía a Telegram; devuelve solo ACK
 
 
 class ResetRequest(BaseModel):
@@ -368,8 +370,10 @@ async def process_message(body: ProcessRequest, _: str = Depends(verify_api_key)
                 await db.commit()
             ocr_response = "📷 Foto recibida. El OCR está tardando, te aviso cuando esté lista."
             ocr_status = "pending"
-        if settings.telegram_mode == "direct":
+        if body.send_direct or settings.telegram_mode == "direct":
             await send_message(body.chat_id, ocr_response)
+            if body.send_direct:
+                return {"response": "✅ Factura registrada.", "status": ocr_status}
         return {"response": ocr_response, "status": ocr_status}
 
     from langchain_core.messages import AIMessage, HumanMessage
@@ -406,15 +410,16 @@ async def process_message(body: ProcessRequest, _: str = Depends(verify_api_key)
                 response_text = msg.content
                 break
 
-        # En modo directo, enviar el mensaje de vuelta a Telegram
-        if settings.telegram_mode == "direct":
+        if body.send_direct or settings.telegram_mode == "direct":
             await send_message(body.chat_id, response_text)
+            if body.send_direct:
+                return {"response": "✅", "status": "success"}
 
         return {"response": response_text, "status": "success"}
 
     except LLMError:
         error_msg = "⚠️ El servicio de IA no está disponible temporalmente. Intenta en unos minutos."
-        if settings.telegram_mode == "direct":
+        if body.send_direct or settings.telegram_mode == "direct":
             await send_message(body.chat_id, error_msg)
         return JSONResponse(status_code=503, content={"response": error_msg, "status": "error"})
 
@@ -573,8 +578,10 @@ async def process_ocr(body: OcrRequest, _: str = Depends(verify_api_key)):
 
     try:
         response, _ = await _ocr_and_save(body.image_base64, saved_photo_path)
-        if settings.telegram_mode == "direct":
+        if body.send_direct or settings.telegram_mode == "direct":
             await send_message(body.chat_id, response)
+            if body.send_direct:
+                return {"response": "✅ Factura registrada.", "status": "success"}
         return {"response": response, "status": "success"}
 
     except LLMError:

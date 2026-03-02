@@ -19,6 +19,12 @@ def parse_args() -> argparse.Namespace:
         "--api-key",
         default="a7f3e91b2d5c84e6f0a1b9c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1",
     )
+    parser.add_argument(
+        "--send-direct",
+        action="store_true",
+        default=False,
+        help="El backend envía la respuesta directamente a Telegram y retorna solo un ACK",
+    )
     return parser.parse_args()
 
 
@@ -31,6 +37,7 @@ def main() -> int:
             "message": message,
             "chat_id": args.chat_id,
             "source": args.source,
+            "send_direct": args.send_direct,
         }
     ).encode("utf-8")
     request = urllib.request.Request(

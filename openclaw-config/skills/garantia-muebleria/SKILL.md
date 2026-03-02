@@ -17,10 +17,12 @@ Actívate cuando el usuario mencione: garantía, garantia, Michelle, reclamo, pr
 curl -s -X POST "${BACKEND_URL}/v1/process" \
   -H "Authorization: Bearer ${NORENA_API_KEY}" \
   -H "Content-Type: application/json" \
-  -d "{\"message\": $(echo "$USER_MESSAGE" | jq -Rs .), \"chat_id\": \"${CHAT_ID}\", \"source\": \"openclaw\"}"
+  -d "{\"message\": $(echo "$USER_MESSAGE" | jq -Rs .), \"chat_id\": \"${CHAT_ID}\", \"source\": \"openclaw\", \"send_direct\": true}"
 ```
 
-3. Extrae el campo `response` del JSON retornado y envíalo al usuario en Telegram.
+3. Con `"send_direct": true`, el backend ya envió la respuesta completa al usuario directamente vía Telegram.
+   El curl devuelve solo `{"response": "✅", "status": "success"}`.
+   **Responde únicamente `✅` — no agregues nada más.**
 
 ## Ejemplos que activan este skill
 
