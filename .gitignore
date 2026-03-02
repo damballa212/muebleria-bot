@@ -1,0 +1,43 @@
+# Credenciales reales — NUNCA commitear
+.env
+
+# Override de desarrollo local — no subir al VPS
+docker-compose.override.yml
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# Entorno virtual
+.venv/
+venv/
+env/
+
+# Alembic
+alembic.ini
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Fotos de facturas (solo en producción/VPS)
+photos/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+
+# macOS
+.DS_Store
+
+# Claude Code config (desarrollo local)
+.claude/
+
+# Archivos temporales de pruebas
+.tmp_*.txt

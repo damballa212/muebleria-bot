@@ -1,0 +1,68 @@
+services:
+  backend:
+    build: .
+    ports:
+      - "127.0.0.1:8000:8000"   # Solo localhost — OpenClaw (nativo) accede por aquí
+    env_file: .env
+    networks: [internal, dokploy-network]
+    depends_on: [postgres, redis]
+    restart: unless-stopped
+    volumes:
+      - invoice_photos:/app/photos   # Fotos de facturas persistentes
+
+  celery-worker:
+    build: .
+    command: celery -A src.tasks.celery_app worker -l info -c 4
+    env_file: .env
+    networks: [internal, dokploy-network]
+    depends_on: [redis, postgres]
+    restart: unless-stopped
+
+  celery-beat:
+    build: .
+    command: celery -A src.tasks.celery_app beat -l info --scheduler celery.beat:PersistentScheduler
+    env_file: .env
+    networks: [internal]
+    depends_on: [redis, postgres]
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:17-alpine
+    env_file: .env
+    environment:
+      POSTGRES_DB: assistant
+      POSTGRES_USER: assistant
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - postgres_backups:/backups
+    networks: [internal]
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    networks: [internal]
+    restart: unless-stopped
+
+  # Backup automático diario a las 3am
+  pg-backup:
+    image: postgres:17-alpine
+    env_file: .env
+    volumes:
+      - postgres_backups:/backups
+      - ./scripts/pg_backup.sh:/backup.sh:ro
+    entrypoint: /bin/sh
+    command: -c "echo '0 3 * * * /backup.sh' | crontab - && crond -f"
+    networks: [internal]
+    depends_on: [postgres]
+    restart: unless-stopped
+
+networks:
+  internal:
+  dokploy-network:
+    external: true
+
+volumes:
+  postgres_data:
+  postgres_backups:
+  invoice_photos:

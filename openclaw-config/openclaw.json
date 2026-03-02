@@ -1,0 +1,36 @@
+{
+    "skills": {
+        "entries": {
+            "garantia-muebleria": {
+                "env": {
+                    "BACKEND_URL": "http://localhost:8000",
+                    "NORENA_API_KEY": "REEMPLAZAR_CON_TU_API_KEY"
+                }
+            },
+            "cotizacion-muebleria": {
+                "env": {
+                    "BACKEND_URL": "http://localhost:8000",
+                    "NORENA_API_KEY": "REEMPLAZAR_CON_TU_API_KEY"
+                }
+            },
+            "factura-muebleria": {
+                "env": {
+                    "BACKEND_URL": "http://localhost:8000",
+                    "NORENA_API_KEY": "REEMPLAZAR_CON_TU_API_KEY"
+                }
+            },
+            "consultar-casos": {
+                "env": {
+                    "BACKEND_URL": "http://localhost:8000",
+                    "NORENA_API_KEY": "REEMPLAZAR_CON_TU_API_KEY"
+                }
+            },
+            "recordatorio-muebleria": {
+                "env": {
+                    "BACKEND_URL": "http://localhost:8000",
+                    "NORENA_API_KEY": "REEMPLAZAR_CON_TU_API_KEY"
+                }
+            }
+        }
+    }
+}
